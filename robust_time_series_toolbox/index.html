@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>RITS | Robust Interrupted Time Series Toolbox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="./assets/app/app.ico">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.6/dist/semantic.min.css">
+  <!--<link rel="stylesheet" type="text/css" href="./src/theme.css">-->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.6/dist/semantic.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <style type="text/css">
+    .hidden.menu {
+      display: none;
+    }
+
+    .masthead.segment {
+      min-height: 700px;
+      padding: 1em 0em;
+    }
+
+    .masthead .logo.item img {
+      margin-right: 1em;
+    }
+
+    .masthead .ui.menu .ui.button {
+      margin-left: 0.5em;
+    }
+
+    .masthead h1.ui.header {
+      margin-top: 1em;
+      margin-bottom: 0em;
+      font-size: 3em;
+      font-weight: normal;
+    }
+
+    .masthead h2 {
+      font-size: 1.7em;
+      font-weight: normal;
+    }
+
+    .ui.vertical.stripe {
+      padding: 8em 0em;
+    }
+
+    .ui.vertical.stripe h3 {
+      font-size: 2em;
+    }
+
+    .ui.vertical.stripe .button+h3,
+    .ui.vertical.stripe p+h3 {
+      margin-top: 3em;
+    }
+
+    .ui.vertical.stripe .floated.image {
+      clear: both;
+    }
+
+    .ui.vertical.stripe p {
+      font-size: 1.33em;
+    }
+
+    .ui.vertical.stripe .horizontal.divider {
+      margin: 3em 0em;
+    }
+
+    .quote.stripe.segment {
+      padding: 0em;
+    }
+
+    .quote.stripe.segment .grid .column {
+      padding-top: 5em;
+      padding-bottom: 5em;
+    }
+
+    .footer.segment {
+      padding: 5em 0em;
+    }
+
+    .secondary.pointing.menu .toc.item {
+      display: none;
+    }
+
+    @media only screen and (max-width: 700px) {
+      .ui.fixed.menu {
+        display: none !important;
+      }
+
+      .secondary.pointing.menu .item,
+      .secondary.pointing.menu .menu {
+        display: none;
+      }
+
+      .secondary.pointing.menu .toc.item {
+        display: block;
+      }
+
+      .masthead.segment {
+        min-height: 350px;
+      }
+
+      .masthead h1.ui.header {
+        font-size: 2em;
+        margin-top: 1.5em;
+      }
+
+      .masthead h2 {
+        margin-top: 0.5em;
+        font-size: 1.5em;
+      }
+    }
+
+    /********************************/
+
+    /* The laptop with borders */
+    .laptop {
+      -webkit-transform-origin: 0 0;
+      transform-origin: 0 0;
+      -webkit-transform: scale(.6) translate(-50%);
+      transform: scale(.6) translate(-50%);
+      left: 50%;
+      position: absolute;
+      border-radius: 30px;
+      border-style: solid;
+      border-color: #e7e6eb;
+      background-color: black;
+      padding-bottom: 30px;
+    }
+
+
+    /* The keyboard of the laptop */
+    .laptop:after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 1600px;
+      height: 40px;
+      margin: 30px 0 0 -110px;
+      background: #e7e6eb;
+      border-bottom-left-radius: 25px;
+      border-bottom-right-radius: 25px;
+    }
+
+    /* The top of the keyboard */
+    .laptop:before {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 250px;
+      height: 30px;
+      bottom: -30px;
+      left: 50%;
+      -webkit-transform: translate(-50%);
+      transform: translate(-50%);
+      background-color: #c3c5c9;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      z-index: 1;
+    }
+
+    /* The screen (or content) of the device */
+    .laptop .content {
+      width: 1366px;
+      height: 710px;
+      overflow: hidden;
+      border: none;
+    }
+
+    /* The screen (or content) of the device */
+    .laptop .content img.app {
+      text-align: center;
+      width: 106%;
+      margin-left: -3%;
+      margin-top: -1%;
+    }
+
+    @media only screen and (max-width: 900px) {
+      .laptop {
+        -webkit-transform: scale(.3) translate(-50%);
+        transform: scale(.3) translate(-50%);
+      }
+    }
+
+    /********************************/
+    body * {
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    /********************************/
+
+    .app-screenshoot {
+      min-width: 100%;
+      height: 100px;
+      overflow: visible;
+      margin-top: 20px !important;
+    }
+
+    .app-header {
+      margin-bottom: 80px !important;
+    }
+
+    img.app {
+      width: 100%;
+    }
+
+    @media only screen and (max-width: 900px) {
+      .app-header {
+        margin-bottom: 0px !important;
+      }
+    }
+
+    /********************************/
+    .cards .card>.image {
+      text-align: center;
+    }
+
+    .cards.features .card>.image>img {
+      width: auto;
+      height: 13em;
+      padding: 1em;
+      display: inline-block;
+    }
+
+    .cards.downloads .card>.content>.header {
+      text-align: center;
+    }
+
+    .cards.downloads .card>.image>img {
+      width: auto;
+      height: 13em;
+      padding: 0em;
+      display: inline-block;
+    }
+
+    .cards.downloads .card>.image:hover>img {
+      filter: grayscale(100%);
+      opacity: 0.6;
+      transition: filter linear 500ms, opacity linear 500ms;
+    }
+
+    /********************************/
+    .papers .ui.feed>.event>.label img {
+      border-radius: 0;
+    }
+
+    /********************************/
+    .main-content {
+      scroll-behavior: smooth;
+    }
+
+    /********************************/
+    #section-downloads .card .image {
+      background: transparent;
+    }
+
+    #section-downloads .card .image img {
+      width: 40%;
+    }
+
+    #section-downloads .card .content {
+      border: none;
+    }
+
+    #section-downloads .card {
+      padding-top: 50px;
+      padding-bottom: 20px;
+    }
+
+    #section-downloads .download-macosx {
+      background-color: rgb(231, 231, 231);
+    }
+
+    #section-downloads .download-win {
+      background-color: #00b6f0;
+    }
+
+    #section-downloads .download-win * {
+      color: white;
+    }
+
+    #section-downloads .download-linux {
+      background-color: #de460c;
+    }
+
+    #section-downloads .download-linux * {
+      color: white;
+    }
+
+    /********************************/
+    .segment h3 {
+      color: #0c5174;
+    }
+
+    /********************************/
+    #section-start img {
+      border: none;
+    }
+
+    #section-start em {
+      font-family: 'Roboto Mono', monospace;
+      font-style: normal;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      padding: 3px;
+    }
+
+    /********************************/
+    .app-header .right.menu {
+      padding-bottom: 10px;
+    }
+
+    .app-header .app-name {
+      width: 250px;
+    }
+
+    .app-header .app-name img {
+      height: 40px;
+      width: auto !important;
+      padding: 2px;
+      padding-right: 10px;
+    }
+
+    p {
+      font-size: 1.14285714rem;
+      font-size: 1.2em !important;
+    }
+
+    /********************************/
+    .masthead.segment > img{
+      position: absolute;
+      top: 0; left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .main-content > .masthead.segment {
+      -ms-transition: background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s, opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s;
+      -moz-transition: background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s, opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s;
+      -webkit-transition: background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s, opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s;
+      transition: background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s, opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s;
+      /*background-image: url(./assets/app/backgrounds-blank-blue.jpg);*/
+      background: rgb(0, 0, 0, 0.5);
+    }
+
+    .ui.inverted.vertical.footer.segment,
+    body > .ui.fixed.menu,
+    body > .ui.sidebar.menu{
+      background: rgb(0, 54, 73, 0.8);
+    }
+    body > .ui.fixed.menu .active{
+      color: white!important;
+      background: rgb(255, 255, 255, 0.2);
+    }
+    body > .ui.fixed.menu * {
+      color: white!important;
+    }
+
+    .main-content .ui.vertical.stripe.segment:nth-child(even){
+      /*background: red;*/
+    }
+    .main-content .ui.vertical.stripe.segment:nth-child(odd){
+      background: rgb(0, 54, 73, 0.05);
+    }
+
+    /********************************/
+    #section-papers .label img{
+      border-radius: 0;
+    }
+    /********************************/
+  </style>
+  <script>
+    $(document)
+      .ready(function () {
+
+        // fix menu when passed
+        $('.masthead')
+          .visibility({
+            once: false,
+            onBottomPassed: function () {
+              $('.fixed.menu').transition('fade in');
+            },
+            onBottomPassedReverse: function () {
+              $('.fixed.menu').transition('fade out');
+            }
+          });
+
+        // create sidebar and attach to menu open
+        $('.ui.sidebar')
+          .sidebar('attach events', '.toc.item');
+
+      });
+    $(document).ready(function () {
+      $("a[href^='#']").click(function (event) {
+        event.preventDefault();
+        $("html, body").animate({
+          scrollTop: $($(this).attr("href")).offset().top
+        }, 500);
+      });
+    });
+  </script>
+
+  <!-- Following Menu -->
+  <div class="ui large top fixed hidden menu">
+    <div class="ui container">
+      <a class="active item app-name">RITS-Toolbox</a>
+      <div class="right menu">
+        <a class="item" href="#section-features">Features</a>
+        <a class="item" href="#section-downloads">Download</a>
+        <a class="item" href="#section-start">Getting started</a>
+        <a class="item" href="#section-documentation">Documentation</a>
+        <a class="item" href="#section-contact">Research group</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <div class="ui vertical inverted sidebar menu">
+    <a class="active item app-name">RITS-Toolbox</a>
+    <div class="right menu">
+      <a class="item" href="#section-features">Features</a>
+      <a class="item" href="#section-downloads">Download</a>
+      <a class="item" href="#section-start">Getting started</a>
+      <a class="item" href="#section-documentation">Documentation</a>
+      <a class="item" href="#section-contact">Research group</a>
+    </div>
+  </div>
+
+  <!-- Page Contents -->
+  <div class="pusher main-content">
+    <div class="ui inverted vertical masthead center aligned segment app-header">
+      <img class="bg1" src="./assets/app/backgrounds-blank-blue.jpg"/>
+      <div class="ui container">
+        <div class="ui large secondary inverted pointing menu">
+          <a class="toc item">
+            <i class="sidebar icon"></i>
+          </a>
+          <a class="active item app-name">
+            <img src="./assets/app/app.png" />
+            RITS-Toolbox
+          </a>
+
+          <div class="right menu">
+            <a class="item" href="#section-features">Features</a>
+            <a class="item" href="#section-downloads">Download</a>
+            <a class="item" href="#section-start">Getting started</a>
+            <a class="item" href="#section-documentation">Documentation</a>
+            <a class="item" href="#section-contact">Research group</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ui text container ">
+        <h1 class="ui inverted header">
+          Robust Interrupted Time Series Toolbox
+        </h1>
+        <p>Discovering the effectiveness of policy interventions in health care delivery services.</p>
+        <a class="ui huge google plus button" href="#section-start">Get Started <i class="right arrow icon"></i></a>
+
+        <div class="ui app-screenshoot">
+          <div class="laptop">
+            <div class="content">
+              <img class="app" src="./assets/img/39.png">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!----------------------------------------->
+    <div id="section-features" class="ui vertical stripe segment">
+      <div class="ui middle aligned stackable grid container">
+        <div class="row">
+          <div class="center aligned column">
+            <h3>Features for your analysis</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="center aligned column">
+            <div class="ui three stackable cards features">
+              <div class="card">
+                <div class="image">
+                  <img src="./assets/icons/state-of-art.svg">
+                </div>
+                <div class="content">
+                  <div class="header">State-of-art statistical analysis</div>
+                  <!--<div class="meta"><a></a></div>-->
+                  <div class="description">
+                    The toolbox adopts the robust statistical methods published by (Cruz, Bender, and Ombao, 2019) based
+                    on a formal statistical model that can identify a change-point after a policy intervention and
+                    quantify its uncertainty.
+                  </div>
+                </div>
+                <div class="extra content">
+                  <span class="center floated">
+                    <a class="ui google plus button" href="#section-documentation">
+                      Read more about the model<i class="right arrow icon"></i>
+                    </a>
+                  </span>
+                </div>
+                <!--<div class="extra content"><span class="right floated">..</span><span><i class="user icon"></i>...</span></div>-->
+              </div>
+              <div class="card">
+                <div class="image">
+                  <img src="./assets/icons/plots.svg">
+                </div>
+                <div class="content">
+                  <div class="header">Visualize results and metrics</div>
+                  <!--<div class="meta"><a></a></div>-->
+                  <div class="description">
+                    The software provides a high level of interactivity in each graphical result to contrast the
+                    differences in pre- and post- intervention in the mean values and correlations. Each graphic can be
+                    zoomed, shifted and saved independently.
+                  </div>
+                </div>
+                <!--<div class="extra content"><span class="right floated">..</span><span><i class="user icon"></i>...</span></div>-->
+              </div>
+              <div class="card">
+                <div class="image">
+                  <img src="./assets/icons/console.svg">
+                </div>
+                <div class="content">
+                  <div class="header">Run everywhere</div>
+                  <!--<div class="meta"><a></a></div>-->
+                  <div class="description">
+                    We developed and optimized the software guarantying that it can run smoothly in the three major
+                    operating systems: Windows, Mac OSX, and GNU/Linux.
+                  </div>
+                </div>
+                <!--<div class="extra content"><span class="right floated">..</span><span><i class="user icon"></i>...</span></div>-->
+              </div>
+              <div class="card">
+                <div class="image">
+                  <img src="./assets/icons/gears.svg">
+                </div>
+                <div class="content">
+                  <div class="header">Accelerate results analysis</div>
+                  <!--<div class="meta"><a></a></div>-->
+                  <div class="description">
+                    Focus on the analysis and not in the processing part: we have implemented all the steps in the model
+                    through a visual interface to reduce the complexity of the model.
+                  </div>
+                </div>
+                <!--<div class="extra content"><span class="right floated">..</span><span><i class="user icon"></i>...</span></div>-->
+              </div>
+              <div class="card">
+                <div class="image">
+                  <img src="./assets/icons/database-secure.svg">
+                </div>
+                <div class="content">
+                  <div class="header">Data privacy</div>
+                  <!--<div class="meta"><a></a></div>-->
+                  <div class="description">
+                    We are also concerned about the use of sensible information. All processing is performed on your own
+                    computer and no information is sent to the network.
+                  </div>
+                </div>
+                <!--<div class="extra content"><span class="right floated">..</span><span><i class="user icon"></i>...</span></div>-->
+              </div>
+              <div class="card">
+                <div class="image">
+                  <img src="./assets/icons/github.svg">
+                </div>
+                <div class="content">
+                  <div class="header">Open source</div>
+                  <!--<div class="meta"><a></a></div>-->
+                  <div class="description">
+                    The toolbox is free and open source, double-licensed under the MIT and GPLv3 licenses. You can use,
+                    redistribute, and integrate it into your projects without any obstacle.
+
+                  </div>
+                </div>
+                <div class="extra content">
+                  <span class="center floated">
+                  </span>
+                </div>
+                <!--<div class="extra content"><span class="right floated">..</span><span><i class="user icon"></i>...</span></div>-->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="center aligned column">
+            <a class="ui vk button" href="#section-documentation">
+              If you plan to use this software in your research,
+              please cite us.<i class="right arrow icon"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!----------------------------------------->
+    <div id="section-downloads" class="ui vertical stripe segment">
+      <div class="ui middle aligned stackable grid container">
+        <div class="row">
+          <div class="center aligned column">
+            <h3>Downloads</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="center aligned column">
+            <div class="ui three stackable link cards downloads">
+              <a class="card download-macosx" href="https://drive.google.com/open?id=19EniGj9pPorJwa6T21j2oYbOfRW47oWN">
+                <div class="image">
+                  <img src="./assets/icons/apple.svg">
+                </div>
+                <div class="content">
+                  <div class="header">Mac OS</div>
+                  <!--<div class="meta"><a></a></div>-->
+                  <div class="description">
+
+                  </div>
+                </div>
+                <!--<div class="extra content"><span class="right floated">..</span><span><i class="user icon"></i>...</span></div>-->
+              </a>
+              <a class="card download-win" href="https://drive.google.com/open?id=1M9toc-di-97GMqYZRIDBw02Wahil-CWO">
+                <div class="image">
+                  <img src="./assets/icons/windows-white.svg">
+                </div>
+                <div class="content">
+                  <div class="header">Windows 64 bits</div>
+                  <!--<div class="meta"><a></a></div>-->
+                  <div class="description">
+
+                  </div>
+                </div>
+                <!--<div class="extra content"><span class="right floated">..</span><span><i class="user icon"></i>...</span></div>-->
+              </a>
+              <a class="card download-linux" href="https://drive.google.com/open?id=19hT64C2dXN1-r56N_iYpB7r0K7sI0pLa">
+                <div class="image">
+                  <img src="./assets/icons/ubuntu-white.svg">
+                </div>
+                <div class="content">
+                  <div class="header">Linux</div>
+                  <!--<div class="meta"><a></a></div>-->
+                  <div class="description">
+
+                  </div>
+                </div>
+                <!--<div class="extra content"><span class="right floated">..</span><span><i class="user icon"></i>...</span></div>-->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!----------------------------------------->
+    <div id="section-start" class="ui vertical stripe segment">
+      <div class="ui middle aligned stackable grid container">
+        <div class="row">
+          <div class="center aligned column">
+            <h3>Getting started</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="seven wide center floated column">
+            <img src="./assets/img/44.png" class="ui large bordered rounded image">
+          </div>
+          <div class="nine wide column">
+            <h3 class="ui header">1. Load the dataset</h3>
+            <p>KRITS can process CSV tables. The file should have three columns: the institute name, the registering
+              date, and the registered value.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="nine wide column">
+            <h3 class="ui header">2. Choose the date range</h3>
+            <p>The toolbox will plot the time series in the dataset. Sometimes, we will need just a specific interval to
+              analyze. Use the bars to choose the processing start and end dates.</p>
+          </div>
+          <div class="seven wide center floated column">
+            <img src="./assets/img/42.png" class="ui large bordered rounded image">
+          </div>
+        </div>
+        <div class="row">
+          <div class="seven wide center floated column">
+            <img src="./assets/img/41.png" class="ui large bordered rounded image">
+          </div>
+          <div class="nine wide column">
+            <h3 class="ui header">3. Choose the potential change-point intervals</h3>
+            <p>The statistical model requires an interval of theoretical (or potential) change-points. You can select
+              the range using the bars. Remember that longer intervals will need more time to process.</p>
+            <p>Once you are sure about the intervals, press ”Model the dataset” to start the processing.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="nine wide column">
+            <h3 class="ui header">4. Data summary</h3>
+            <p>In this table, you will see a brief summary of the processing results: the difference on the slope,
+              levels and noise that appears in your data.</p>
+          </div>
+          <div class="seven wide center floated column">
+            <img src="./assets/img/39.png" class="ui large bordered rounded image">
+          </div>
+        </div>
+        <div class="row">
+          <div class="seven wide center floated column">
+            <img src="./assets/img/38.png" class="ui large bordered rounded image">
+          </div>
+          <div class="nine wide column">
+            <h3 class="ui header">5. Relevant results</h3>
+            <p>Extending the data summary, in this table you will see the difference between the estimated and your
+              theoretical change-point proposal. Details about the slope, intercept and noise estimates are also
+              presented along with the confidence intervals.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="nine wide column">
+            <h3 class="ui header">6. Explore the dataset: fitting and log-likelihood</h3>
+            <p>Click on <em>Menu View>Estimated mode</em> to see the time series differences between the fitted time
+              series with
+              the change points. If you are wonder about the log-likelihood of the model, scroll down to see the plot.
+            </p>
+            <p>Each graphic appears in an independent plot that can be zoomed and saved independently.</p>
+          </div>
+          <div class="seven wide center floated column">
+            <img src="./assets/img/35.png" class="ui large bordered rounded image">
+          </div>
+        </div>
+        <div class="row">
+          <div class="seven wide center floated column">
+            <img src="./assets/img/31.png" class="ui large bordered rounded image">
+          </div>
+          <div class="nine wide column">
+            <h3 class="ui header">7. Explore the dataset: residuals and auto-correlation</h3>
+            <p>Click on <em>Menu View>Residuals</em> to see the residuals of the fitted model (after and before the
+              change-point)
+              and their autocorrelation function according to the details expressed in the paper.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="nine wide column">
+            <h3 class="ui header">8. Read and save the report</h3>
+            <p>Click on <em>Menu Reports>Complete report</em>. The toolbox collects all results data of the model
+              through tables
+              and plots in this large sheet. Click on <em>DOCX report</em> to save it in a MS Word 2017 format.</p>
+            <p>Note that due to the number of images, it could take a few seconds to load during the first time.</p>
+          </div>
+          <div class="seven wide center floated column">
+            <img src="./assets/img/30.png" class="ui large bordered rounded image">
+          </div>
+        </div>
+        <div class="row">
+          <div class="seven wide center floated column">
+            <img src="./assets/img/27.png" class="ui large bordered rounded image">
+          </div>
+          <div class="nine wide column">
+            <h3 class="ui header">9. Get access to the documentation</h3>
+            <p>The theoretical description of the model is also included in the toolbox. Click on <em>Menu Help>Model
+                description</em> to read the paper and check its theoretical details.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!----------------------------------------->
+    <div id="section-documentation" class="ui vertical stripe segment">
+      <div class="ui text container">
+        <h3>Documentation</h3>
+        <p>
+          We are working on the documentation (and the paper) of the software. In the meantime we can refer to our
+          previous papers to consult the statistical model.
+        </p>
+        <div style="text-align: center;">
+        </div>
+        <a class="" href="#section-papers" style="font-size: 300%; text-align: center; display: block">
+          <i class="chevron circle down icon"></i>
+        </a>
+      </div>
+    </div>
+
+    <!----------------------------------------->
+    <div id="section-papers" class="ui vertical stripe segment">
+      <div class="ui text container">
+        <h3>Papers</h3>
+        <p>
+          For additional information, consult the following papers:
+        </p>
+        <div class="ui feed">
+          <div class="event">
+            <div class="label">
+              <img src="./assets/icons/paper2.svg">
+            </div>
+            <div class="content">
+              <div class="date">
+                doi:10.1002/sim.8067
+              </div>
+              <div class="summary">
+                <a>Assessing health care interventions via an interrupted time series model: Study power
+                  and design
+                  considerations</a>
+              </div>
+              <div class="extra text">
+                <div>Cruz, Maricela & Gillen, Daniel & Bender, Miriam & Ombao, Hernando.</div>
+                <div>Statistics in medicine 38.10 (2019).</div>
+              </div>
+            </div>
+          </div>
+          <div class="event">
+            <div class="label">
+              <img src="./assets/icons/paper2.svg">
+            </div>
+            <div class="content">
+              <div class="date">
+                doi:10.1002/sim.7443
+              </div>
+              <div class="summary">
+                <a>A Robust Interrupted Time Series Model for Analyzing Complex Healthcare Intervention
+                  Data</a>
+              </div>
+              <div class="extra text">
+                <div>Cruz, Maricela & Bender, Miriam & Ombao, Hernando.</div>
+                <div>Statistics in medicine 36.29 (2017).</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!----------------------------------------->
+    <div id="section-contact" class="ui vertical stripe segment">
+      <div class="ui text container">
+        <h3>Research group</h3>
+        <div>
+          <p>This project is handled by the Biostatistics Research Group at the King Abdullah University of Science and
+            Technology</p>
+          <p style="display: block; text-align: center;"><a class="ui vk button"
+              href="http://biostats.kaust.edu.sa">KAUST Biostatistics homepage</a>
+          </p>
+          <p>The software toolbox is developed by OPConsulting.</p>
+          <p>If you have any doubt about the model, or if you want us to know that the toolbox was useful to you, please
+            contact Prof. Hernando Ombao.</p>
+          <p>If you have some issue in the installation, or if you discover a bug, please send us an email here:
+            <a href="mailto:issues@op-consulting.tech">issues@op-consulting.tech</a>
+            or report an issue in
+            <a href="https://github.com/biostatistics-kaust/kbiostats.robust_time_series_toolbox/issues">our GitHub
+              page</a>.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="ui inverted vertical footer segment">
+      <div class="ui container">
+        <p>
+          Development and research supported by OSR KAUST research grant to the <a class=""
+            href="http://biostats.kaust.edu.sa">KAUST Biostatistics research group</a>
+        </p>
+      </div>
+    </div>
+    <!--
+    <div class="ui inverted vertical footer segment">
+      <div class="ui container">
+        <div class="ui stackable inverted divided equal height stackable grid">
+          <div class="three wide column">
+            <h4 class="ui inverted header">About</h4>
+            <div class="ui inverted link list">
+              <a href="#" class="item">Sitemap</a>
+              <a href="#" class="item">Contact Us</a>
+            </div>
+          </div>
+          <div class="three wide column">
+            <h4 class="ui inverted header">Services</h4>
+            <div class="ui inverted link list">
+              <a href="#" class="item">A</a>
+            </div>
+          </div>
+          <div class="seven wide column">
+            <h4 class="ui inverted header">Footer Header</h4>
+            <p>Extra space for a call to action inside the footer that could help re-engage users.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  -->
+  </div>
+
+  <!--Model: https://reportportal.io/-->
+  <!--https://freeicons.io/search-icons?search=paper-->
+</body>
+
+</html>
